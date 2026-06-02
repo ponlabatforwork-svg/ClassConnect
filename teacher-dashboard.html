@@ -13,221 +13,9 @@
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-    <style>
-        :root {
-            --primary-color: #003366; /* น้ำเงินกรมท่า ทางการ */
-            --secondary-color: #0056b3; /* น้ำเงินสว่างสำหรับปุ่มเด่น */
-            --bg-color: #f8f9fa;
-            --text-color: #333333;
-            --sidebar-width: 260px;
-            --border-color: #dee2e6;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Sarabun', sans-serif;
-            font-size: 18px;
-            line-height: 1.25;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* ปรับแต่งป๊อปอัป SweetAlert2 */
-        .swal2-popup {
-            font-family: 'Sarabun', sans-serif !important;
-            font-size: 18px !important;
-        }
-
-        /* Sidebar สไตล์ทางการ */
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--primary-color);
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            z-index: 10;
-        }
-
-        .sidebar-header {
-            padding: 25px 20px;
-            background-color: #002244;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .sidebar-header h3 {
-            font-size: 22px;
-            font-weight: 600;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-            padding: 15px 0;
-            flex-grow: 1;
-        }
-
-        .sidebar-menu li a {
-            display: block;
-            padding: 12px 25px;
-            color: #cbd5e1;
-            text-decoration: none;
-            font-size: 18px;
-            transition: all 0.3s;
-        }
-
-        .sidebar-menu li a:hover, .sidebar-menu li.active a {
-            color: #ffffff;
-            background-color: rgba(255,255,255,0.1);
-            border-left: 4px solid #fff;
-            padding-left: 21px;
-        }
-
-        .sidebar-menu li a i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
-        }
-
-        /* พื้นที่เนื้อหาหลัก */
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            background-color: var(--bg-color);
-        }
-
-        .navbar {
-            background-color: #ffffff;
-            padding: 15px 30px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar h2 {
-            font-size: 22px;
-            color: var(--primary-color);
-        }
-
-        .container {
-            padding: 30px;
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        /* แผ่นการ์ดเนื้อหา */
-        .card {
-            background: #ffffff;
-            border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
-            padding: 25px;
-            margin-bottom: 25px;
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            border-bottom: 2px solid #003366;
-            padding-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* หน้าเพจที่ซ่อน/แสดง */
-        .page-content {
-            display: none;
-        }
-
-        .page-content.active {
-            display: block;
-        }
-
-        /* ปุ่มต่างๆ */
-        .btn {
-            font-family: 'Sarabun', sans-serif;
-            font-size: 16px;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: opacity 0.2s;
-        }
-
-        .btn:hover {
-            opacity: 0.9;
-        }
-
-        .btn-primary { background-color: var(--secondary-color); color: white; }
-        .btn-success { background-color: #28a745; color: white; }
-        .btn-secondary { background-color: #6c757d; color: white; }
-        .btn-danger { background-color: #dc3545; color: white; }
-
-        /* ตารางสไตล์ทางการ */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            background: #ffffff;
-        }
-
-        th, td {
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f1f5f9;
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f8fafc;
-        }
-
-        /* ส่วนฟอร์ม */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-family: 'Sarabun', sans-serif;
-            font-size: 16px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="teacher-layout">
 
     <nav class="sidebar">
         <div class="sidebar-header">
@@ -429,7 +217,7 @@
                         </tr>
                     `;
 
-                    // แทรกตารางหน้าคะแนน (จำลองช่อง)
+                    // แทรกตารางหน้าคะแนน
                     if(scoreBody) {
                         scoreBody.innerHTML += `
                             <tr>
@@ -492,7 +280,6 @@
                 const lines = text.split("\n");
                 let count = 0;
 
-                // วนลูปอ่านตั้งแต่แถวที่ 2 เป็นต้นไป (แถวแรกเป็น Header หัวข้อ)
                 for (let i = 1; i < lines.length; i++) {
                     const line = lines[i].trim();
                     if (line) {
@@ -503,7 +290,6 @@
                             const firstName = columns[2].trim();
                             const lastName = columns[3].trim();
 
-                            // บันทึกลงใน Firestore คอลเลกชัน 'student_list'
                             await db.collection('student_list').doc(studentId).set({
                                 studentId: studentId,
                                 prefix: prefix,
@@ -520,6 +306,11 @@
                 loadStudentData();
             };
             reader.readAsText(file, 'UTF-8');
+        }
+
+        // เพิ่มนักเรียนแบบแมนนวล (โครงสร้างฟังก์ชันเผื่อไว้)
+        function addStudentManual() {
+            Swal.fire('ระบบกำลังพัฒนา', 'ฟีเจอร์เพิ่มรายบุคคลกำลังมาเร็วๆ นี้ โปรดใช้ไฟล์ CSV ไปก่อน', 'info');
         }
 
         // มอบหมายสิทธิ์หัวหน้าห้อง
@@ -555,11 +346,10 @@
             const updateData = {};
             updateData[field] = Number(value);
             await db.collection('student_list').doc(studentId).update(updateData);
-            // โหลดข้อมูลเพื่อคำนวณคะแนนรวมในคอลัมน์สุดท้ายใหม่
             loadStudentData();
         }
 
-        // ฟังค์ชันสั่งงานใหม่
+        // ฟังค์ชันสั่งงานใหม่ พร้อมแจ้งเตือนผ่าน Google Apps Script (LINE API)
         async function publishTask() {
             const title = document.getElementById('taskTitle').value;
             const desc = document.getElementById('taskDesc').value;
@@ -573,23 +363,60 @@
 
             Swal.fire({ title: 'กำลังสั่งงานและส่งแจ้งเตือน...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
 
-            // บันทึกภาระงานลง Firebase
-            await db.collection('tasks').add({
-                title: title,
-                description: desc,
-                score: Number(score),
-                deadline: deadline,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            try {
+                // 1. บันทึกภาระงานลง Firebase ก่อน
+                await db.collection('tasks').add({
+                    title: title,
+                    description: desc,
+                    score: Number(score),
+                    deadline: deadline,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
 
-            // ในขั้นตอนนี้บอท LINE จะทำการส่งแจ้งเตือน Flex Message ไปยังกลุ่ม
-            Swal.fire('สั่งงานสำเร็จ!', 'บันทึกภาระงานและส่งสัญญาณแจ้งเตือนเข้ากลุ่มไลน์เรียบร้อยแล้ว', 'success');
-            
-            // ล้างข้อมูลฟอร์ม
-            document.getElementById('taskTitle').value = '';
-            document.getElementById('taskDesc').value = '';
-            document.getElementById('taskScore').value = '';
-            document.getElementById('taskDeadline').value = '';
+                // 2. เรียกใช้ Google Apps Script
+                // *** อย่าลืมเปลี่ยน URL ตรงนี้เป็น Web App URL ของคุณเอง ***
+                const gasUrl = "https://script.google.com/macros/s/AKfycbyj01uiLpNx9WfxpWhM7Mi79ew2NR7qVQ7WgFLI9uve5HBR-19aOsjBDqhPeJ1_1uU0/exec"; 
+                
+                // *** อย่าลืมใส่ Group ID ของกลุ่มไลน์ห้องเรียน ***
+                const lineGroupId = "Ce5f2a536531597ea2149a8611d806dcb"; 
+
+                const requestBody = {
+                    groupId: lineGroupId,
+                    taskData: {
+                        title: title,
+                        description: desc,
+                        score: score,
+                        deadline: deadline.replace("T", " เวลา ") // จัดรูปแบบวันที่ให้อ่านง่าย
+                    }
+                };
+
+                const response = await fetch(gasUrl, {
+                    method: "POST",
+                    body: JSON.stringify(requestBody),
+                    headers: {
+                        "Content-Type": "text/plain;charset=utf-8", // ใช้ text/plain เลี่ยงปัญหา CORS ของ GAS
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    Swal.fire('สั่งงานสำเร็จ!', 'บันทึกภาระงานและส่งสัญญาณแจ้งเตือนเข้ากลุ่มไลน์เรียบร้อยแล้ว', 'success');
+                    
+                    // ล้างข้อมูลฟอร์ม
+                    document.getElementById('taskTitle').value = '';
+                    document.getElementById('taskDesc').value = '';
+                    document.getElementById('taskScore').value = '';
+                    document.getElementById('taskDeadline').value = '';
+                } else {
+                    throw new Error(result.message);
+                }
+
+            } catch (error) {
+                console.error("Error publishing task:", error);
+                // หากติดปัญหาฝั่ง GAS หรือยังไม่ได้ใส่ Link GAS ให้ยังคงขึ้นแจ้งเตือนว่าสั่งงานลงฐานข้อมูลสำเร็จ
+                Swal.fire('สั่งงานลงระบบแล้ว', 'บันทึกงานลงฐานข้อมูลสำเร็จ (แต่ยังไม่ได้ส่งแจ้งเตือนเข้าไลน์ กรุณาตรวจสอบการตั้งค่า GAS)', 'warning');
+            }
         }
 
         // มอบหมายให้หัวหน้าห้องเช็คชื่อแทน
