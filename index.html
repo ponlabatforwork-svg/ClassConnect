@@ -1,1 +1,247 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClassConnect - ระบบบันทึกและตรวจสอบผลการเรียน</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
+    <style>
+        :root {
+            --primary-color: #0056b3; /* น้ำเงินเข้ม โทนหน่วยงานราชการ/โรงเรียน */
+            --bg-color: #f4f6f9;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            font-size: 20px; /* ขนาด Sarabun ที่เหมาะสม */
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .loading-container {
+            text-align: center;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-top: 6px solid var(--primary-color);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .spinner {
+            color: var(--primary-color);
+            font-size: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h2 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            color: #111;
+        }
+
+        p {
+            margin: 0;
+            color: #666;
+            font-size: 18px;
+        }
+        
+        /* ปรับแต่งป๊อปอัป SweetAlert2 ให้เป็นฟอนต์ Sarabun */
+        .swal2-popup {
+            font-family: 'Sarabun', sans-serif !important;
+            font-size: 18px !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-container">
+        <i class="fas fa-circle-notch spinner"></i>
+        <h2>กำลังเข้าสู่ระบบอย่างปลอดภัย</h2>
+        <p>กรุณารอสักครู่ ระบบกำลังตรวจสอบสิทธิ์ผ่าน LINE...</p>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // เริ่มต้นใช้งาน LIFF เมื่อเปิดหน้าเว็บ
+        document.addEventListener("DOMContentLoaded", function() {
+            initializeLiff();
+        });
+
+        async function initializeLiff() {
+            try {
+                // เปลี่ยน "YOUR_LIFF_ID" เป็น LIFF ID ที่คุณได้มาจาก LINE Developers Console
+                await liff.init({ liffId: "YOUR_LIFF_ID" }); 
+                
+                if (liff.isLoggedIn()) {
+                    const profile = await liff.getProfile();
+                    checkUserRegistration(profile.userId, profile.displayName);
+                } else {
+                    liff.login(); // หากยังไม่เข้าสู่ระบบใน LINE ให้เด้งหน้าล็อกอินของ LINE
+                }
+            } catch (err) {
+                console.error(err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: 'ไม่สามารถเชื่อมต่อระบบ LINE Login ได้ คอนฟิกอาจไม่ถูกต้อง',
+                    confirmButtonColor: '#0056b3'
+                });
+            }
+        }
+
+        // ฟังก์ชันตรวจสอบการผูกบัญชีในฐานข้อมูล Firebase Firestore
+        async function checkUserRegistration(lineId, displayName) {
+            try {
+                // ค้นหาใน Collection 'users' ว่ามี Document ID ตรงกับ lineId นี้ไหม
+                const userDoc = await db.collection('users').doc(lineId).get();
+
+                if (userDoc.exists) {
+                    // หากผูกบัญชีแล้ว ตรวจสอบบทบาท (Role) แล้วส่งไปหน้าแดชบอร์ดที่ถูกต้อง
+                    const userData = userDoc.data();
+                    if (userData.role === 'teacher') {
+                        window.location.href = "teacher-dashboard.html";
+                    } else if (userData.role === 'student') {
+                        window.location.href = "student-dashboard.html";
+                    }
+                } else {
+                    // หากยังไม่เคยผูกบัญชี ให้เริ่มขั้นตอนกรอกรหัสนักเรียนเพื่อผูกสิทธิ์
+                    promptStudentBinding(lineId, displayName);
+                }
+            } catch (error) {
+                console.error("Error checking user:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เกิดข้อผิดพลาดในการเชื่อมต่อข้อมูล',
+                    text: error.message
+                });
+            }
+        }
+
+        // ป๊อปอัปให้กรอกรหัสนักเรียน
+        function promptStudentBinding(lineId, displayName) {
+            Swal.fire({
+                title: '<i class="fas fa-user-grad text-primary"></i> ลงทะเบียนผูกบัญชีนักเรียน',
+                text: `สวัสดีคุณ ${displayName} กรุณาระบุรหัสประจำตัวนักเรียนเพื่อเข้าใช้งานครั้งแรก (ผูกสิทธิ์อัตโนมัติ)`,
+                input: 'text',
+                inputPlaceholder: 'กรอกรหัสประจำตัวนักเรียนที่นี่...',
+                showCancelButton: false,
+                confirmButtonText: 'ตรวจสอบข้อมูล <i class="fas fa-arrow-right"></i>',
+                confirmButtonColor: '#0056b3',
+                allowOutsideClick: false,
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'จำเป็นต้องกรอกรหัสประจำตัวนักเรียน!';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    verifyStudentId(result.value, lineId);
+                }
+            });
+        }
+
+        // ตรวจสอบรหัสนักเรียนในฐานข้อมูล (ที่ครู Import CSV ไว้ล่วงหน้า)
+        async function verifyStudentId(studentId, lineId) {
+            Swal.showLoading();
+            try {
+                // ค้นหาในคอลเลกชัน student_list (รายชื่อที่ครูนำเข้าไว้) โดยหาจากรหัสประจำตัว
+                const studentQuery = await db.collection('student_list').where('studentId', '==', studentId).get();
+
+                if (!studentQuery.empty) {
+                    // เจอนักเรียนในระบบ
+                    const studentDoc = studentQuery.docs[0];
+                    const studentData = studentDoc.data();
+                    
+                    Swal.hideLoading();
+                    
+                    // ให้ยืนยันความถูกต้องของ ชื่อ-สกุล
+                    Swal.fire({
+                        title: 'ตรวจสอบความถูกต้อง',
+                        html: `คุณคือ <b>${studentData.prefix}${studentData.firstName} ${studentData.lastName}</b> ใช่หรือไม่?<br><small style="color:red;">*เมื่อผูกบัญชีแล้วจะไม่สามารถเปลี่ยนได้</small>`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'ใช่, ข้อมูลถูกต้อง',
+                        cancelButtonText: 'ไม่ใช่, กรอกใหม่',
+                        confirmButtonColor: '#0056b3',
+                        cancelButtonColor: '#6c757d',
+                        allowOutsideClick: false
+                    }).then(async (confirmResult) => {
+                        if (confirmResult.isConfirmed) {
+                            Swal.showLoading();
+                            
+                            // บันทึกสิทธิ์ลงคอลเลกชัน 'users' เพื่อใช้ทำ Auto-Login รอบหน้า
+                            await db.collection('users').doc(lineId).set({
+                                lineId: lineId,
+                                studentId: studentId,
+                                name: `${studentData.prefix}${studentData.firstName} ${studentData.lastName}`,
+                                role: 'student',
+                                isPresident: false, // เริ่มต้นเป็นนักเรียนธรรมดา ครูตั้งค่าหัวหน้าภายหลังได้
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'ผูกบัญชีสำเร็จ!',
+                                text: 'ระบบได้ผูกบัญชี LINE กับรหัสนักเรียนนี้เรียบร้อยแล้ว ในรอบหน้าจะเข้าใช้งานได้ทันทีไม่ต้องเข้าสู่ระบบซ้ำ',
+                                confirmButtonColor: '#0056b3'
+                            }).then(() => {
+                                window.location.href = "student-dashboard.html";
+                            });
+                        } else {
+                            // กดไม่ใช่ ให้กลับไปกรอกรหัสใหม่
+                            promptStudentBinding(lineId, "ใหม่");
+                        }
+                    });
+
+                } else {
+                    // ไม่พบรหัสนักเรียนในฐานข้อมูล
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ไม่พบข้อมูลนักเรียน',
+                        text: 'รหัสประจำตัวนี้ไม่มีอยู่ในระบบห้องเรียน กรุณาตรวจสอบหรือแจ้งคุณครูประจำวิชา',
+                        confirmButtonText: 'ลองอีกครั้ง',
+                        confirmButtonColor: '#ff0000'
+                    }).then(() => {
+                        promptStudentBinding(lineId, displayName);
+                    });
+                }
+            } catch (error) {
+                console.error("Error verifying student:", error);
+                Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: error.message });
+            }
+        }
+    </script>
+</body>
+</html>
