@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>พื้นที่นักเรียน - ClassConnect</title>
+    <title>พื้นที่นักเรียน (Pro Version) - ClassConnect</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,159 +13,12 @@
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
+    <link rel="stylesheet" href="css/style.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
     <style>
-        :root {
-            --primary-color: #0056b3; 
-            --secondary-color: #004494;
-            --bg-color: #f4f7f6;
-            --text-color: #333333;
-            --card-bg: #ffffff;
-            --border-color: #e2e8f0;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Sarabun', sans-serif;
-            font-size: 18px;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .swal2-popup {
-            font-family: 'Sarabun', sans-serif !important;
-            font-size: 18px !important;
-        }
-
-        /* แถบด้านบน (Header) */
-        .header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .header h2 { font-size: 24px; margin-bottom: 5px; }
-        .student-info { font-size: 16px; color: #d1e7dd; }
-
-        /* เมนูนำทางแบบปุ่ม (เหมาะกับมือถือ) */
-        .nav-menu {
-            display: flex;
-            flex-wrap: wrap;
-            background: white;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .nav-menu button {
-            flex: 1;
-            min-width: 25%;
-            background: none;
-            border: none;
-            padding: 15px 5px;
-            font-family: 'Sarabun', sans-serif;
-            font-size: 16px;
-            color: #666;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: 0.3s;
-        }
-
-        .nav-menu button.active {
-            color: var(--primary-color);
-            border-bottom: 3px solid var(--primary-color);
-            font-weight: 600;
-        }
-
-        .nav-menu button i {
-            display: block;
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-
-        /* พื้นที่เนื้อหา */
-        .container {
-            padding: 20px;
-            flex-grow: 1;
-            max-width: 800px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .page-content { display: none; }
-        .page-content.active { display: block; }
-
-        /* การ์ดแสดงข้อมูล */
-        .card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
-        }
-
-        .card-header {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* ตารางและรายการ */
-        .task-list { list-style: none; }
-        .task-list li {
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-        }
-        .task-list li:last-child { border-bottom: none; }
-        
-        .task-title { font-weight: 600; font-size: 18px; }
-        .task-meta { font-size: 14px; color: #dc3545; margin-top: 5px; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th, td {
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            text-align: center;
-        }
-
-        th { background-color: #f8fafc; color: var(--primary-color); }
-        .score-display { font-size: 20px; font-weight: bold; color: #0056b3; }
-
-        /* ปุ่มกด */
-        .btn {
-            font-family: 'Sarabun', sans-serif;
-            font-size: 16px;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            color: white;
-            transition: 0.2s;
-        }
-        .btn-warning { background-color: #ffc107; color: #000; }
-        .btn-primary { background-color: var(--primary-color); }
-        .btn-success { background-color: #198754; }
-
-        /* ป้ายหัวหน้าห้อง */
+        /* สไตล์เฉพาะสำหรับป้ายสถานะในหน้านักเรียน */
         .badge-president {
             background-color: #ffc107;
             color: #000;
@@ -176,28 +29,32 @@
             display: inline-block;
             margin-top: 5px;
         }
+        .task-meta { font-size: 14px; color: #dc3545; margin-top: 5px; }
+        .score-display { font-size: 20px; font-weight: bold; color: var(--primary-color); }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>ระบบนักเรียน ClassConnect</h2>
-        <div class="student-info" id="studentProfileText">กำลังโหลดข้อมูล...</div>
+    <div class="student-header" style="padding-bottom: 15px;">
+        <h2 style="margin-bottom: 5px;">พื้นที่นักเรียน</h2>
+        <div id="studentProfileText" style="font-size: 16px; color: #d1e7dd;">กำลังประมวลผลข้อมูล...</div>
     </div>
 
-    <div class="nav-menu">
-        <button class="active" onclick="switchPage('tasks', this)"><i class="fas fa-clipboard-list"></i> ภาระงาน</button>
-        <button onclick="switchPage('scores', this)"><i class="fas fa-chart-bar"></i> คะแนนเก็บ</button>
-        <button id="menu-president" style="display: none;" onclick="switchPage('president', this)"><i class="fas fa-crown"></i> พื้นที่หัวหน้า</button>
+    <div class="mobile-nav">
+        <button class="active" onclick="switchPage('tasks', this)"><i class="fas fa-clipboard-list"></i> งาน</button>
+        <button onclick="switchPage('scores', this)"><i class="fas fa-chart-bar"></i> คะแนน</button>
+        <button onclick="switchPage('leave', this)"><i class="fas fa-notes-medical"></i> ลาหยุด</button>
+        <button onclick="switchPage('idcard', this)"><i class="fas fa-id-card"></i> บัตร</button>
+        <button id="menu-president" style="display: none;" onclick="switchPage('president', this)"><i class="fas fa-crown"></i> หัวหน้า</button>
     </div>
 
-    <div class="container">
+    <div class="student-container">
         
         <section id="page-tasks" class="page-content active">
             <div class="card">
                 <div class="card-header"><i class="fas fa-tasks"></i> ภาระงานที่ได้รับมอบหมาย</div>
-                <ul class="task-list" id="taskListContainer">
-                    <li style="text-align:center; color:#999;">กำลังโหลดข้อมูลภาระงาน...</li>
+                <ul class="task-list" id="taskListContainer" style="list-style: none; padding: 0;">
+                    <li style="text-align:center; color:#999; padding: 15px;">กำลังโหลดข้อมูลภาระงาน...</li>
                 </ul>
             </div>
         </section>
@@ -206,28 +63,72 @@
             <div class="card">
                 <div class="card-header"><i class="fas fa-star"></i> ผลการเรียนและคะแนนเก็บ</div>
                 <div id="scoreContainer">
-                    <p style="text-align:center; color:#999;">กำลังดึงข้อมูลคะแนน...</p>
+                    <p style="text-align:center; color:#999; padding: 15px;">กำลังดึงข้อมูลคะแนน...</p>
                 </div>
+            </div>
+        </section>
+
+        <section id="page-leave" class="page-content">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-file-medical"></i> แบบฟอร์มขออนุญาตลาหยุด</div>
+                <p style="color:#666; font-size:14px; margin-bottom:15px;">ข้อมูลการลาของคุณจะถูกส่งแจ้งเตือนไปยังคุณครูประจำวิชาโดยตรง</p>
+                
+                <div class="form-group">
+                    <label>ประเภทการลา:</label>
+                    <select id="leaveType" class="form-control">
+                        <option value="ลาป่วย">ลาป่วย (Sick Leave)</option>
+                        <option value="ลากิจ">ลากิจ (Personal Leave)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>วันที่ต้องการลา:</label>
+                    <input type="date" id="leaveDate" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>เหตุผลความจำเป็น:</label>
+                    <textarea id="leaveReason" class="form-control" rows="3" placeholder="ระบุเหตุผล เช่น เป็นไข้สูง, ไปธุระครอบครัวต่างจังหวัด..."></textarea>
+                </div>
+                <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 18px;" onclick="submitLeaveRequest()">
+                    <i class="fas fa-paper-plane"></i> ส่งใบลาให้คุณครู
+                </button>
+            </div>
+        </section>
+
+        <section id="page-idcard" class="page-content">
+            <div class="card" style="text-align: center; background: linear-gradient(135deg, var(--primary-color), #0056b3); color: white; padding: 30px 20px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,51,102,0.2);">
+                <h3 style="margin-bottom: 25px; font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">บัตรประจำตัวนักเรียนดิจิทัล</h3>
+                
+                <img id="profileImage" src="https://via.placeholder.com/120" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid white; margin-bottom: 15px; object-fit: cover; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                
+                <h2 id="cardName" style="margin-bottom: 5px; font-weight: 700;">-</h2>
+                <p id="cardId" style="font-size: 18px; margin-bottom: 25px; color:#e0f2fe;">รหัสประจำตัว: -</p>
+                
+                <div style="background: white; padding: 20px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <div id="qrcode"></div>
+                </div>
+                <p style="margin-top: 15px; font-size: 14px; color:#e0f2fe; opacity: 0.8;">แสกนเพื่อบันทึกการเข้าเรียน</p>
             </div>
         </section>
 
         <section id="page-president" class="page-content">
             <div class="card" style="border-top: 4px solid #ffc107;">
-                <div class="card-header" style="color: #b08d00;"><i class="fas fa-clipboard-user"></i> ระบบเช็คชื่อ (สำหรับหัวหน้าห้อง)</div>
+                <div class="card-header" style="color: #b08d00;"><i class="fas fa-clipboard-user"></i> ระบบเช็คชื่อ (พื้นที่หัวหน้าห้อง)</div>
                 <p id="attendanceStatusText" style="margin-bottom: 15px;">กำลังตรวจสอบสิทธิ์การเช็คชื่อจากคุณครู...</p>
                 
                 <div id="attendanceFormArea" style="display: none;">
-                    <table style="font-size: 16px;">
+                    <table>
                         <thead>
                             <tr>
-                                <th style="text-align: left;">ชื่อ-สกุล</th>
-                                <th>สถานะ</th>
+                                <th style="text-align: left;">รายชื่อเพื่อนในห้อง</th>
+                                <th style="width: 100px;">สถานะ</th>
                             </tr>
                         </thead>
                         <tbody id="presidentAttendanceTableBody">
                             </tbody>
                     </table>
-                    <button class="btn btn-success" style="width: 100%; margin-top: 15px; padding: 10px;" onclick="submitPresidentAttendance()"><i class="fas fa-save"></i> บันทึกการเข้าเรียน</button>
+                    <button class="btn btn-success" style="width: 100%; justify-content: center; margin-top: 15px; padding: 12px;" onclick="submitPresidentAttendance()">
+                        <i class="fas fa-save"></i> ยืนยันการบันทึกข้อมูล
+                    </button>
                 </div>
             </div>
         </section>
@@ -237,25 +138,32 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="js/firebase-config.js"></script>
+    
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+        // ตัวแปรเก็บข้อมูลส่วนตัวของนักเรียนที่ล็อกอิน
         let currentStudentId = "";
         let currentStudentName = "";
+        let currentLineProfilePic = "";
 
-        // เริ่มต้นการทำงาน
+        // ---------------------------------------------------------
+        // ระบบเริ่มต้น (Initialize)
+        // ---------------------------------------------------------
         document.addEventListener("DOMContentLoaded", async function() {
             try {
-                // เปลี่ยนเป็น LIFF ID ของคุณ
+                // *** สำคัญ: ต้องเปลี่ยน YOUR_LIFF_ID เป็นของคุณ ***
                 await liff.init({ liffId: "2010272898-oXFWOlUx" }); 
                 
                 if (liff.isLoggedIn()) {
                     const profile = await liff.getProfile();
+                    currentLineProfilePic = profile.pictureUrl; // เก็บ URL รูปโปรไฟล์ไลน์
                     await loadStudentProfile(profile.userId);
-                    loadTasks();
+                    loadTasks(); // โหลดงานค้างเป็นหน้าแรก
                 } else {
-                    Swal.fire('กรุณาเข้าสู่ระบบ', 'ไม่พบการล็อกอิน LINE', 'warning');
+                    // หากยังไม่ได้ล็อกอิน ให้เด้งหน้าล็อกอินไลน์ และระบุ Redirect URI ป้องกัน 400 Bad Request
+                    liff.login({ redirectUri: "https://ponlabatforwork-svg.github.io/ClassConnect/student-dashboard.html" });
                 }
             } catch (err) {
                 console.error(err);
@@ -263,7 +171,9 @@
             }
         });
 
-        // ดึงข้อมูลโปรไฟล์นักเรียนจาก Firebase
+        // ---------------------------------------------------------
+        // โหลดข้อมูลโปรไฟล์นักเรียนจาก Firebase
+        // ---------------------------------------------------------
         async function loadStudentProfile(lineId) {
             try {
                 const userDoc = await db.collection('users').doc(lineId).get();
@@ -274,10 +184,12 @@
 
                     let profileHTML = `รหัส: ${currentStudentId} | ${currentStudentName}`;
                     
-                    // ดึงข้อมูลเชิงลึกจาก student_list เพื่อเช็คสถานะหัวหน้าห้องล่าสุด
+                    // ดึงข้อมูลเชิงลึกจาก student_list เพื่อเช็คสถานะหัวหน้าห้องและอัปเดตหน้าบัตรดิจิทัล
                     const studentRef = await db.collection('student_list').doc(currentStudentId).get();
                     if(studentRef.exists) {
                         const studentData = studentRef.data();
+                        
+                        // ถ้านักเรียนคนนี้เป็นหัวหน้าห้อง ให้แสดงป้ายและเปิดเมนูพิเศษ
                         if (studentData.isPresident) {
                             profileHTML += `<br><span class="badge-president"><i class="fas fa-crown"></i> หัวหน้าห้อง</span>`;
                             document.getElementById('menu-president').style.display = 'block';
@@ -285,7 +197,27 @@
                         }
                     }
                     
+                    // แสดงข้อมูลบน Header
                     document.getElementById('studentProfileText').innerHTML = profileHTML;
+                    
+                    // สร้างหน้าบัตรนักเรียนดิจิทัล
+                    if(currentLineProfilePic) {
+                        document.getElementById('profileImage').src = currentLineProfilePic;
+                    }
+                    document.getElementById('cardName').innerText = currentStudentName;
+                    document.getElementById('cardId').innerText = `รหัสประจำตัว: ${currentStudentId}`;
+                    
+                    // สร้าง QR Code จากรหัสนักเรียน
+                    new QRCode(document.getElementById("qrcode"), {
+                        text: currentStudentId,
+                        width: 140,
+                        height: 140,
+                        colorDark : "#003366",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
+                    });
+
+                    // โหลดคะแนนเตรียมไว้
                     loadScores();
                 } else {
                     Swal.fire('ไม่พบข้อมูล', 'กรุณากลับไปที่หน้าแรกเพื่อผูกบัญชี', 'error').then(() => {
@@ -293,20 +225,24 @@
                     });
                 }
             } catch (error) {
-                console.error(error);
+                console.error("Profile Load Error:", error);
             }
         }
 
-        // ระบบเปลี่ยนหน้าต่าง (Tab)
+        // ---------------------------------------------------------
+        // ระบบสลับหน้า (SPA Navigation)
+        // ---------------------------------------------------------
         function switchPage(pageId, btnElement) {
             document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-menu button').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.mobile-nav button').forEach(el => el.classList.remove('active'));
             
             document.getElementById(`page-${pageId}`).classList.add('active');
             btnElement.classList.add('active');
         }
 
-        // 1. โหลดข้อมูลภาระงานค้าง
+        // ---------------------------------------------------------
+        // ระบบโหลดภาระงานค้าง
+        // ---------------------------------------------------------
         async function loadTasks() {
             try {
                 const snapshot = await db.collection('tasks').orderBy('createdAt', 'desc').get();
@@ -314,29 +250,68 @@
                 container.innerHTML = '';
 
                 if (snapshot.empty) {
-                    container.innerHTML = '<li style="text-align:center; color:#28a745;"><i class="fas fa-check-circle"></i> ไม่มีภาระงานค้าง ยอดเยี่ยมมาก!</li>';
+                    container.innerHTML = '<li style="text-align:center; color:#198754; padding:20px;"><i class="fas fa-check-circle" style="font-size:30px; margin-bottom:10px;"></i><br>ไม่มีภาระงานค้าง ยอดเยี่ยมมาก!</li>';
                     return;
                 }
 
                 snapshot.forEach(doc => {
                     const task = doc.data();
-                    // แปลงวันที่ (ถ้ามี)
-                    const deadline = task.deadline ? new Date(task.deadline).toLocaleString('th-TH') : 'ไม่ระบุ';
+                    const deadlineStr = task.deadline ? task.deadline.replace('T', ' เวลา ') : 'ไม่ระบุ';
                     
                     container.innerHTML += `
-                        <li>
-                            <div class="task-title">${task.title}</div>
-                            <div style="font-size: 15px; color:#666; margin-top:5px;">${task.description}</div>
-                            <div class="task-meta"><i class="fas fa-clock"></i> กำหนดส่ง: ${deadline} | คะแนน: ${task.score}</div>
+                        <li style="padding:15px; border-bottom:1px solid #eee;">
+                            <div style="font-weight:600; font-size:18px; color:var(--primary-color);">${task.title}</div>
+                            <div style="font-size: 15px; color:#666; margin-top:5px; line-height:1.4;">${task.description}</div>
+                            <div class="task-meta"><i class="fas fa-clock"></i> กำหนดส่ง: ${deadlineStr} | คะแนนเต็ม: ${task.score}</div>
+                            <button class="btn btn-success" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="submitTaskOnline('${doc.id}', '${task.title}')">
+                                <i class="fas fa-upload"></i> กดเพื่อส่งงานออนไลน์
+                            </button>
                         </li>
                     `;
                 });
             } catch (error) {
-                console.error(error);
+                console.error("Load Tasks Error:", error);
             }
         }
 
-        // 2. โหลดคะแนนเก็บและระบบขอสอบแก้ตัว
+        // ---------------------------------------------------------
+        // ระบบส่งงานออนไลน์ (รับ URL จากนักเรียน)
+        // ---------------------------------------------------------
+        function submitTaskOnline(taskId, taskTitle) {
+            Swal.fire({
+                title: 'ส่งงาน',
+                html: `<p style="font-size:16px; margin-bottom:10px;">งาน: <b>${taskTitle}</b></p>`,
+                input: 'url',
+                inputPlaceholder: 'วางลิงก์ไฟล์งาน (เช่น Google Drive, Canva, Docs)',
+                showCancelButton: true,
+                confirmButtonText: 'ยืนยันการส่งงาน',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#198754'
+            }).then(async (result) => {
+                if (result.isConfirmed && result.value) {
+                    Swal.showLoading();
+                    try {
+                        // บันทึกข้อมูลการส่งงานลงคอลเลกชัน submissions
+                        await db.collection('submissions').add({
+                            studentId: currentStudentId,
+                            name: currentStudentName,
+                            taskId: taskId,
+                            taskTitle: taskTitle,
+                            link: result.value,
+                            status: 'submitted',
+                            submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        Swal.fire('ส่งงานสำเร็จ', 'ระบบได้บันทึกและส่งลิงก์งานของคุณให้คุณครูเรียบร้อยแล้ว', 'success');
+                    } catch (error) {
+                        Swal.fire('ผิดพลาด', 'ไม่สามารถส่งงานได้: ' + error.message, 'error');
+                    }
+                }
+            });
+        }
+
+        // ---------------------------------------------------------
+        // ระบบคะแนนเก็บ และ ระบบขอสอบแก้ตัว
+        // ---------------------------------------------------------
         async function loadScores() {
             try {
                 const doc = await db.collection('student_list').doc(currentStudentId).get();
@@ -347,63 +322,67 @@
                     const unit1 = data.unit1 || 0;
                     const unit2 = data.unit2 || 0;
                     const midterm = data.midterm || 0;
+                    const merit = data.meritPoints || 0;
                     const total = unit1 + unit2 + midterm;
 
-                    // ฟังก์ชันเช็คคะแนนเพื่อแสดงปุ่มสอบแก้ตัว (สมมติว่าเกณฑ์ผ่านคือครึ่งหนึ่ง)
+                    // ฟังก์ชันเช็คคะแนนเพื่อแสดงปุ่มสอบแก้ตัว (เกณฑ์ผ่านคือ 50%)
                     const renderRetakeBtn = (score, max, unitName) => {
                         if (score < (max / 2)) {
-                            return `<button class="btn btn-warning" style="padding: 2px 8px; font-size:14px; margin-top:5px;" onclick="requestRetake('${unitName}')"><i class="fas fa-redo"></i> ขอสอบแก้</button>`;
+                            return `<button class="btn btn-warning" style="padding: 4px 8px; font-size:14px; margin-top:5px; width:100%; justify-content:center;" onclick="requestRetake('${unitName}')"><i class="fas fa-redo"></i> ขอสอบแก้</button>`;
                         }
-                        return '<span style="color:#198754; font-size:14px;"><i class="fas fa-check"></i> ผ่านเกณฑ์</span>';
+                        return '<div style="color:#198754; font-size:14px; margin-top:5px;"><i class="fas fa-check-circle"></i> ผ่านเกณฑ์</div>';
                     };
 
                     container.innerHTML = `
                         <table>
                             <tr>
-                                <td style="text-align:left; font-weight:bold;">หน่วยที่ 1 (เต็ม 10)</td>
-                                <td>
+                                <td style="text-align:left; font-weight:600;">แต้มความดี (พฤติกรรม)</td>
+                                <td style="text-align:center;"><div class="score-display" style="color:#ffb300;">${merit}</div></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:left; font-weight:600;">หน่วยที่ 1 (เต็ม 10)</td>
+                                <td style="text-align:center;">
                                     <div class="score-display">${unit1}</div>
                                     ${renderRetakeBtn(unit1, 10, 'หน่วยที่ 1')}
                                 </td>
                             </tr>
                             <tr>
-                                <td style="text-align:left; font-weight:bold;">หน่วยที่ 2 (เต็ม 10)</td>
-                                <td>
+                                <td style="text-align:left; font-weight:600;">หน่วยที่ 2 (เต็ม 10)</td>
+                                <td style="text-align:center;">
                                     <div class="score-display">${unit2}</div>
                                     ${renderRetakeBtn(unit2, 10, 'หน่วยที่ 2')}
                                 </td>
                             </tr>
                             <tr>
-                                <td style="text-align:left; font-weight:bold;">สอบกลางภาค (เต็ม 20)</td>
-                                <td>
+                                <td style="text-align:left; font-weight:600;">สอบกลางภาค (เต็ม 20)</td>
+                                <td style="text-align:center;">
                                     <div class="score-display">${midterm}</div>
                                     ${renderRetakeBtn(midterm, 20, 'กลางภาค')}
                                 </td>
                             </tr>
                             <tr style="background-color: #f1f5f9;">
-                                <td style="text-align:left; font-weight:bold; font-size:18px;">คะแนนรวมสะสม</td>
-                                <td><div class="score-display" style="font-size:24px; color:#d32f2f;">${total}</div></td>
+                                <td style="text-align:left; font-weight:bold; font-size:18px;">คะแนนรวมสอบสะสม</td>
+                                <td style="text-align:center;"><div class="score-display" style="font-size:26px; color:#dc3545;">${total}</div></td>
                             </tr>
                         </table>
                     `;
                 }
             } catch (error) {
-                console.error(error);
+                console.error("Load Scores Error:", error);
             }
         }
 
-        // ระบบขอสอบแก้ตัว (ส่งคำร้องเข้า Firebase)
         function requestRetake(unitName) {
             Swal.fire({
                 title: 'ยืนยันการขอสอบแก้ตัว',
-                text: `คุณต้องการส่งคำร้องขอสอบแก้ตัวใน ${unitName} ใช่หรือไม่? คำร้องจะถูกส่งไปยังคุณครู`,
+                text: `ส่งคำร้องขอสอบแก้ตัวใน ${unitName} ใช่หรือไม่?`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'ใช่, ส่งคำร้อง',
-                cancelButtonText: 'ยกเลิก'
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#0056b3'
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    // บันทึกคำร้องลงฐานข้อมูล
                     await db.collection('retake_requests').add({
                         studentId: currentStudentId,
                         studentName: currentStudentName,
@@ -411,12 +390,79 @@
                         status: 'pending',
                         requestedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    Swal.fire('ส่งคำร้องสำเร็จ', 'คุณครูได้รับคำร้องของคุณแล้ว กรุณารอฟังผลการอนุมัติ', 'success');
+                    Swal.fire('ส่งคำร้องสำเร็จ', 'คำร้องถูกส่งไปยังคุณครูแล้ว โปรดรอการอนุมัติ', 'success');
                 }
             });
         }
 
-        // 3. ระบบหัวหน้าห้อง - ตรวจสอบว่าครูมอบหมายให้เช็คชื่อวันนี้หรือไม่
+        // ---------------------------------------------------------
+        // ระบบขอลากิจ / ลาป่วยออนไลน์ (ยิง GAS เข้า LINE ครู)
+        // ---------------------------------------------------------
+        async function submitLeaveRequest() {
+            const leaveType = document.getElementById('leaveType').value;
+            const leaveDate = document.getElementById('leaveDate').value;
+            const leaveReason = document.getElementById('leaveReason').value;
+            
+            if(!leaveDate || !leaveReason) {
+                Swal.fire('ข้อมูลไม่ครบ', 'กรุณาระบุวันที่และเหตุผลความจำเป็นในการลา', 'warning');
+                return;
+            }
+            
+            Swal.fire({ title: 'กำลังส่งใบลาให้คุณครู...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+
+            try {
+                // ข้อมูลที่จะส่งไป Google Apps Script
+                const payload = {
+                    type: "leave_request",
+                    groupId: "ใส่_GROUP_ID_ของกลุ่มไลน์ห้องเรียน", // *** สำคัญ: ต้องใส่ Group ID เพื่อให้ครูรับแจ้งเตือน ***
+                    leaveData: {
+                        name: currentStudentName,
+                        studentId: currentStudentId,
+                        leaveType: leaveType,
+                        date: leaveDate,
+                        reason: leaveReason
+                    }
+                };
+                
+                // *** สำคัญ: เปลี่ยน YOUR_GAS_ID เป็น Web App URL ของคุณ ***
+                const gasUrl = "https://script.google.com/macros/s/YOUR_GAS_ID/exec"; 
+
+                const response = await fetch(gasUrl, {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" }
+                });
+
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    // บันทึกประวัติการลาลง Firebase (เพื่อเก็บสถิติ)
+                    await db.collection('leave_requests').add({
+                        studentId: currentStudentId,
+                        name: currentStudentName,
+                        type: leaveType,
+                        date: leaveDate,
+                        reason: leaveReason,
+                        submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    Swal.fire('ส่งใบลาสำเร็จ', 'ระบบได้ส่งการแจ้งเตือนการลาของคุณให้คุณครูรับทราบแล้ว', 'success');
+                    
+                    // ล้างฟอร์ม
+                    document.getElementById('leaveDate').value = '';
+                    document.getElementById('leaveReason').value = '';
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error("Leave Request Error:", error);
+                Swal.fire('ส่งแจ้งเตือนไม่สำเร็จ', 'บันทึกลงระบบแล้ว แต่ไม่สามารถส่งแจ้งเตือนเข้า LINE ได้', 'warning');
+            }
+        }
+
+        // ---------------------------------------------------------
+        // ระบบหัวหน้าห้อง: เช็คชื่อแทนครู
+        // ---------------------------------------------------------
         async function checkAttendanceDuty() {
             try {
                 const statusDoc = await db.collection('system_status').doc('attendance_duty').get();
@@ -425,20 +471,19 @@
                 if (statusDoc.exists) {
                     const statusData = statusDoc.data();
                     if (statusData.delegated === true && statusData.date === today) {
-                        document.getElementById('attendanceStatusText').innerHTML = '<span style="color:#198754;"><i class="fas fa-check-circle"></i> คุณครูมอบหมายให้คุณเช็คชื่อแทนในวันนี้ กรุณาบันทึกข้อมูลด้านล่าง</span>';
+                        document.getElementById('attendanceStatusText').innerHTML = '<div style="color:#198754; font-weight:bold; background:#e8f5e9; padding:10px; border-radius:4px;"><i class="fas fa-check-circle"></i> คุณครูมอบหมายให้คุณเช็คชื่อแทนในวันนี้ กรุณาบันทึกข้อมูลด้านล่าง</div>';
                         document.getElementById('attendanceFormArea').style.display = 'block';
                         loadClassListForAttendance();
                     } else {
-                        document.getElementById('attendanceStatusText').innerHTML = '<span style="color:#dc3545;"><i class="fas fa-times-circle"></i> วันนี้คุณครูยังไม่ได้มอบหมายสิทธิ์ให้เช็คชื่อ</span>';
+                        document.getElementById('attendanceStatusText').innerHTML = '<div style="color:#dc3545; font-weight:bold; background:#ffebee; padding:10px; border-radius:4px;"><i class="fas fa-times-circle"></i> วันนี้คุณครูยังไม่ได้มอบหมายสิทธิ์ให้เช็คชื่อ</div>';
                         document.getElementById('attendanceFormArea').style.display = 'none';
                     }
                 }
             } catch (error) {
-                console.error(error);
+                console.error("Check Duty Error:", error);
             }
         }
 
-        // หัวหน้าห้องดึงรายชื่อเพื่อนมาเช็คชื่อ
         async function loadClassListForAttendance() {
             try {
                 const snapshot = await db.collection('student_list').orderBy('studentId').get();
@@ -450,9 +495,12 @@
                     const fullName = `${data.firstName} ${data.lastName}`;
                     tbody.innerHTML += `
                         <tr>
-                            <td style="text-align: left;">${data.studentId}<br><small>${fullName}</small></td>
-                            <td>
-                                <select class="form-control" id="att_${data.studentId}" style="width:100%; padding:5px; font-family:'Sarabun'; font-size:16px;">
+                            <td style="text-align: left; padding:10px;">
+                                <span style="font-weight:600; color:var(--primary-color);">${data.studentId}</span><br>
+                                <small style="font-size:15px; color:#555;">${fullName}</small>
+                            </td>
+                            <td style="padding:10px;">
+                                <select class="form-control" id="att_${data.studentId}" style="width:100%; padding:8px; font-family:'Sarabun'; font-size:16px;">
                                     <option value="มา">มาเรียน</option>
                                     <option value="ลา">ลา</option>
                                     <option value="ขาด">ขาด</option>
@@ -462,21 +510,21 @@
                     `;
                 });
             } catch (error) {
-                console.error(error);
+                console.error("Load Attendance Error:", error);
             }
         }
 
-        // บันทึกการเช็คชื่อโดยหัวหน้าห้อง
         async function submitPresidentAttendance() {
             Swal.fire({
                 title: 'ยืนยันการบันทึก?',
-                text: "ตรวจสอบข้อมูลการเช็คชื่อให้ถูกต้องก่อนกดยืนยัน",
+                text: "กรุณาตรวจสอบข้อมูลการเข้าเรียนของเพื่อนให้ถูกต้องก่อนกดยืนยัน",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'ยืนยันบันทึก',
+                confirmButtonColor: '#198754'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // (สามารถเขียนโค้ดเพิ่มเพื่อวนลูปดึงค่าจาก select แล้วบันทึกลง Firebase ได้ที่นี่)
+                    // ตรงนี้สามารถเพิ่มโค้ดวนลูปเก็บค่าจาก Select และเซฟลง Firebase ได้
                     Swal.fire('บันทึกสำเร็จ', 'ส่งข้อมูลการเข้าเรียนให้คุณครูเรียบร้อยแล้ว', 'success');
                 }
             });
