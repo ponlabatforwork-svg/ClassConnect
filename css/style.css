@@ -1,1 +1,284 @@
+/* ==========================================================================
+   ClassConnect Master Stylesheet
+   ออกแบบและพัฒนาสำหรับระบบการศึกษา (รองรับ Mobile & Desktop)
+   ========================================================================== */
 
+/* 1. นำเข้าฟอนต์ TH Sarabun จาก Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+/* 2. กำหนดตัวแปรสีระดับสากล (CSS Variables) สำหรับโทนทางการ */
+:root {
+    --primary-color: #003366;       /* น้ำเงินกรมท่า (สำหรับครู/เมนูหลัก) */
+    --student-primary: #0056b3;     /* น้ำเงินสว่าง (สำหรับนักเรียน) */
+    --bg-color: #f4f7f6;            /* สีพื้นหลังเว็บ */
+    --card-bg: #ffffff;             /* สีพื้นหลังการ์ดเนื้อหา */
+    --text-color: #333333;          /* สีข้อความหลัก */
+    --border-color: #e2e8f0;        /* สีเส้นขอบ */
+    --success-color: #198754;       /* สีเขียว (สำเร็จ/ผ่าน) */
+    --warning-color: #ffc107;       /* สีเหลือง (แจ้งเตือน/หัวหน้าห้อง) */
+    --danger-color: #dc3545;        /* สีแดง (ขาด/สอบตก/ลบ) */
+    --sidebar-width: 260px;
+}
+
+/* 3. ตั้งค่าพื้นฐาน (Reset & Base Typography) */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 18px; /* ขนาดที่อ่านง่ายสุดสำหรับ Sarabun บนหน้าจอ */
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    line-height: 1.4;
+}
+
+/* ปรับแต่ง SweetAlert2 ให้เข้ากับธีมระบบ */
+.swal2-popup {
+    font-family: 'Sarabun', sans-serif !important;
+    font-size: 18px !important;
+}
+
+/* ==========================================================================
+   UI Components (ส่วนประกอบที่ใช้ร่วมกันทุกหน้า)
+   ========================================================================== */
+
+/* การ์ด (Cards) */
+.card {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
+}
+
+.card-title, .card-header {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ปุ่มกด (Buttons) */
+.btn {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover { opacity: 0.85; transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.btn-primary { background-color: var(--primary-color); color: white; }
+.btn-student { background-color: var(--student-primary); color: white; }
+.btn-success { background-color: var(--success-color); color: white; }
+.btn-warning { background-color: var(--warning-color); color: #000; }
+.btn-danger { background-color: var(--danger-color); color: white; }
+.btn-secondary { background-color: #6c757d; color: white; }
+
+/* ฟอร์มและช่องกรอกข้อมูล (Forms) */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 16px;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
+}
+
+/* ตาราง (Tables) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    border: 1px solid var(--border-color);
+    padding: 12px 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f8fafc;
+    color: var(--primary-color);
+    font-weight: 600;
+    text-align: center;
+}
+
+tr:nth-child(even) { background-color: #f8fafc; }
+
+/* ==========================================================================
+   ระบบซ่อน/แสดงเนื้อหา (SPA Navigation)
+   ========================================================================== */
+.page-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+.page-content.active { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Layout - หน้า Loading (index.html)
+   ========================================================================== */
+.loading-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.loading-container {
+    text-align: center;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-top: 6px solid var(--primary-color);
+    max-width: 400px;
+    width: 90%;
+}
+
+.spinner {
+    color: var(--primary-color);
+    font-size: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* ==========================================================================
+   Layout - หน้าคุณครู (Teacher Dashboard)
+   ========================================================================== */
+.teacher-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--primary-color);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+.sidebar-header {
+    padding: 25px 20px;
+    background-color: #002244;
+    text-align: center;
+}
+
+.sidebar-menu { list-style: none; padding: 15px 0; flex-grow: 1; }
+.sidebar-menu li a {
+    display: block;
+    padding: 12px 25px;
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.sidebar-menu li a:hover, .sidebar-menu li.active a {
+    color: #ffffff;
+    background-color: rgba(255,255,255,0.1);
+    border-left: 4px solid #fff;
+}
+.sidebar-menu li a i { margin-right: 10px; width: 20px; text-align: center; }
+
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.navbar {
+    background-color: #ffffff;
+    padding: 15px 30px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ==========================================================================
+   Layout - หน้านักเรียน (Student Dashboard - Mobile First)
+   ========================================================================== */
+.student-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.mobile-nav {
+    display: flex;
+    flex-wrap: wrap;
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.mobile-nav button {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 12px 5px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 16px;
+    color: #666;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+}
+
+.mobile-nav button.active {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    font-weight: 600;
+}
+
+.mobile-nav button i { display: block; font-size: 20px; margin-bottom: 5px; }
+
+.student-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+}
